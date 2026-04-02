@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import Link from 'next/link'
 import {
   LayoutDashboard, Folder, Activity, CheckSquare,
   Users, MessageSquare, Briefcase, Calendar,
@@ -22,15 +23,10 @@ export default function Dashboard() {
   }
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', active: true },
-    { icon: Folder, label: 'Projetos', active: false },
-    { icon: Activity, label: 'Atividades', active: false },
-    { icon: CheckSquare, label: 'Tarefas', active: false },
-    { icon: Users, label: 'Equipe', active: false },
-    { icon: MessageSquare, label: 'Mensagens', active: false },
-    { icon: Briefcase, label: 'Negócios', active: false },
-    { icon: Calendar, label: 'Calendário', active: false },
-    { icon: Settings, label: 'Configurações', active: false },
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: true },
+    { icon: Users, label: 'Clientes', href: '/clientes', active: false },
+    { icon: MessageSquare, label: 'Mensagens', href: '#', active: false },
+    { icon: Settings, label: 'Configurações', href: '#', active: false },
   ]
 
   return (
@@ -51,38 +47,42 @@ export default function Dashboard() {
           ${isCollapsed ? 'md:w-20' : 'md:w-64'} w-64`}
       >
         {/* LOGO AREA */}
-        <div className="h-20 flex items-center justify-between px-6 border-b border-gray-50">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded bg-[#FF6B4A] flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-lg">M</span>
+        <div className={`h-20 flex items-center border-b border-gray-50 transition-all ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
+          {!isCollapsed && (
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-8 h-8 rounded bg-[#FF6B4A] flex items-center justify-center shrink-0">
+                <span className="text-white font-bold text-lg">M</span>
+              </div>
+              <span className="font-semibold text-xl text-gray-900 whitespace-nowrap">Hotel Maly</span>
             </div>
-            {!isCollapsed && <span className="font-semibold text-xl text-gray-900 whitespace-nowrap">Hotel Maly</span>}
-          </div>
+          )}
           {/* Botão de colapsar (apenas Desktop) */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden md:flex text-gray-400 hover:text-gray-600"
+            className="hidden md:flex text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Menu size={20} />
           </button>
         </div>
 
         {/* NAV LINKS */}
-        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1.5">
           {navItems.map((item, index) => {
             const Icon = item.icon
             return (
-              <a
+              <Link
                 key={index}
-                href="#"
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${item.active
+                href={item.href} // Agora ele usa o caminho ('/', '/clientes', etc)
+                title={isCollapsed ? item.label : undefined}
+                className={`flex items-center rounded-xl transition-colors ${isCollapsed ? 'justify-center py-3' : 'gap-3 px-3 py-2.5'
+                  } ${item.active
                     ? 'bg-gray-50 text-gray-900 font-medium'
                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                   }`}
               >
                 <Icon size={20} className={item.active ? 'text-[#FF6B4A]' : ''} />
                 {!isCollapsed && <span>{item.label}</span>}
-              </a>
+              </Link>
             )
           })}
         </nav>
